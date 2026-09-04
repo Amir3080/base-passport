@@ -39,4 +39,4 @@ Upload:
 
 Then Settings → Pages → Deploy from branch → main / root.
 
-Built by @amirshonnm.
+Built by @amirshonnm..
