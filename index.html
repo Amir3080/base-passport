@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#061a58" />
+  <title>Base Passport — Your onchain passport</title>
+  <meta name="description" content="Turn any Base wallet into a visual onchain passport with stamps, travel history and exploration score." />
+  <meta property="og:title" content="Base Passport" />
+  <meta property="og:description" content="Your Base wallet, turned into an onchain passport." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header class="nav shell">
+    <a href="./" class="brand">
+      <span class="brand-seal">B</span>
+      <span>Base Passport</span>
+    </a>
+    <div class="nav-right">
+      <span class="network-pill">● Base Mainnet</span>
+      <a href="https://x.com/amirshonnm" target="_blank" rel="noreferrer">@amirshonnm ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div class="hero-copy">
+        <div class="kicker">ONCHAIN IDENTITY / BASE</div>
+        <h1>Not another wallet dashboard.<br><span>Your Base passport.</span></h1>
+        <p>
+          See when you arrived, how often you returned, how wide your network became,
+          and which milestones earned a stamp in your passport.
+        </p>
+
+        <form id="walletForm" class="search">
+          <div class="wallet-field">
+            <span>0x</span>
+            <input id="walletInput" autocomplete="off" spellcheck="false" placeholder="Paste any Base wallet address" />
+            <button type="button" id="pasteBtn" class="text-btn">Paste</button>
+          </div>
+          <button class="enter-btn" type="submit">Open passport <span>→</span></button>
+        </form>
+
+        <div class="subline">
+          <span>No wallet connection</span>
+          <span>Public onchain data</span>
+          <span>Free to use</span>
+        </div>
+        <div id="errorBox" class="error" aria-live="polite"></div>
+      </div>
+
+      <div class="cover-wrap" aria-hidden="true">
+        <div class="passport-cover">
+          <div class="cover-top">
+            <span>BASE</span>
+            <span>ONCHAIN</span>
+          </div>
+          <div class="cover-seal">B</div>
+          <div class="cover-title">PASSPORT</div>
+          <div class="cover-chip"></div>
+          <div class="cover-bottom">PUBLIC LEDGER • BASE MAINNET</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="loadingSection" class="loading shell hidden">
+      <div class="scanline"></div>
+      <div class="loading-card">
+        <div class="loading-seal">B</div>
+        <div>
+          <div class="kicker">BORDER CONTROL</div>
+          <h2 id="loadingText">Reading your travel history…</h2>
+          <p>Inspecting public Base activity. No signature required.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultsSection" class="results shell hidden">
+      <div class="results-head">
+        <div>
+          <div class="kicker">PASSPORT ISSUED</div>
+          <h2>Your Base identity, in pages.</h2>
+        </div>
+        <button id="newSearchBtn" class="outline-btn">New passport</button>
+      </div>
+
+      <article id="passportExport" class="book">
+        <div class="book-binding"></div>
+
+        <section class="page identity-page">
+          <div class="page-number">01</div>
+          <div class="page-head">
+            <div>
+              <div class="micro">BASE PASSPORT / IDENTITY</div>
+              <div class="passport-id" id="passportId">BP-000000</div>
+            </div>
+            <div class="status-stamp" id="statusStamp">EXPLORER</div>
+          </div>
+
+          <div class="identity-main">
+            <div class="portrait">
+              <div id="portraitIcon">B</div>
+              <span>BASE</span>
+            </div>
+            <div class="identity-copy">
+              <div class="field-label">ONCHAIN NAME</div>
+              <h3 id="displayName">0x...</h3>
+              <div class="mono-line">
+                <span id="addressShort">0x...</span>
+                <button id="copyAddressBtn" class="tiny-btn">copy</button>
+              </div>
+
+              <div class="identity-fields">
+                <div>
+                  <span>FIRST ENTRY</span>
+                  <strong id="firstEntry">—</strong>
+                </div>
+                <div>
+                  <span>ACTIVE MONTHS</span>
+                  <strong id="activeMonths">0</strong>
+                </div>
+                <div>
+                  <span>NETWORK REACH</span>
+                  <strong id="uniqueContacts">0</strong>
+                </div>
+                <div>
+                  <span>TX HISTORY</span>
+                  <strong id="txCount">0</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="score-panel">
+            <div>
+              <span class="field-label">EXPLORATION INDEX</span>
+              <strong id="explorationScore">0</strong>
+              <small>/100</small>
+            </div>
+            <div class="score-track"><div id="scoreBar" class="score-fill"></div></div>
+            <p id="passportSummary">Your Base footprint will appear here.</p>
+          </div>
+
+          <div class="machine-line" id="machineLine">BASE&lt;PASSPORT&lt;000000&lt;&lt;&lt;</div>
+        </section>
+
+        <section class="page stamps-page">
+          <div class="page-number">02</div>
+          <div class="page-head">
+            <div>
+              <div class="micro">VISA PAGES</div>
+              <h4>Milestone stamps</h4>
+            </div>
+            <span id="stampCount" class="soft-label">0 collected</span>
+          </div>
+          <div id="stamps" class="stamp-grid"></div>
+        </section>
+
+        <section class="page log-page">
+          <div class="page-number">03</div>
+          <div class="page-head">
+            <div>
+              <div class="micro">TRAVEL LOG</div>
+              <h4>Last 12 active months</h4>
+            </div>
+            <span id="streakBadge" class="soft-label">🔥 0-day streak</span>
+          </div>
+
+          <div id="monthBars" class="month-bars"></div>
+
+          <div class="log-metrics">
+            <div>
+              <span>BEST STREAK</span>
+              <strong id="bestStreak">0 days</strong>
+            </div>
+            <div>
+              <span>ACTIVE DAYS</span>
+              <strong id="activeDays">0</strong>
+            </div>
+            <div>
+              <span>ETH MOVED</span>
+              <strong id="ethMoved">0 ETH</strong>
+            </div>
+            <div>
+              <span>GAS SPENT</span>
+              <strong id="gasSpent">Calculating…</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="page network-page">
+          <div class="page-number">04</div>
+          <div class="page-head">
+            <div>
+              <div class="micro">BORDER STAMPS</div>
+              <h4>Frequent onchain contacts</h4>
+            </div>
+            <span class="soft-label">Top interactions</span>
+          </div>
+          <div id="contactList" class="contact-list"></div>
+          <div class="network-note">
+            <span>What this page means</span>
+            <p>
+              These are the addresses this wallet interacted with most often in the public
+              transaction history returned by our Base data service.
+            </p>
+          </div>
+        </section>
+
+        <div class="book-footer">
+          <span>BASE PASSPORT • PUBLIC ONCHAIN RECORD</span>
+          <span>BUILT BY @AMIRSHONNM</span>
+        </div>
+      </article>
+
+      <div class="actions">
+        <button id="shareBtn" class="enter-btn">Share passport on X</button>
+        <button id="downloadBtn" class="outline-btn">Download PNG</button>
+        <a id="explorerLink" class="outline-btn" target="_blank" rel="noreferrer">View wallet ↗</a>
+      </div>
+    </section>
+
+    <section class="difference shell">
+      <div class="kicker">WHY PASSPORT?</div>
+      <h2>Journey shows activity.<br>Passport shows identity.</h2>
+      <div class="difference-grid">
+        <div>
+          <span>01</span>
+          <strong>Identity page</strong>
+          <p>Arrival date, network reach, active months and a passport classification.</p>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>Visa stamps</strong>
+          <p>Milestones unlock collectible stamps instead of another plain stats grid.</p>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>Travel log</strong>
+          <p>See how your Base activity evolved month by month.</p>
+        </div>
+        <div>
+          <span>04</span>
+          <strong>Border contacts</strong>
+          <p>See the addresses your wallet returned to most often.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+</body>
+</html>
